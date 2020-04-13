@@ -1,8 +1,1 @@
-.classpath
-.project
-.settings/
-bin/
-target
-
-.idea
-*.iml
+node_modules
