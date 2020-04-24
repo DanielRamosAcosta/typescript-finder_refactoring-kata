@@ -3,52 +3,53 @@ import { FinderCriteria } from "./FinderCriteria"
 import { PersonPair } from "./PersonPair"
 
 export class Finder {
-  private people: Person[]
+  private allPossiblePairs: PersonPair[]
+  private sortedPairs: PersonPair[]
 
   constructor(people: Person[]) {
-    this.people = people
+    this.allPossiblePairs = this.computeAllPossiblePairs(people)
+    this.sortedPairs = this.sortPairs(this.allPossiblePairs)
   }
 
-  Find(finderType: FinderCriteria): PersonPair {
-    let personPairs: PersonPair[] = []
-
-    for (let i = 0; i < this.people.length - 1; i++) {
-      for (let j = i + 1; j < this.people.length; j++) {
-        let r = new PersonPair()
-        if (this.people[i].birthDate.getTime() < this.people[j].birthDate.getTime()) {
-          r.P1 = this.people[i]
-          r.P2 = this.people[j]
-        } else {
-          r.P1 = this.people[j]
-          r.P2 = this.people[i]
-        }
-        r.D = r.P2.birthDate.getTime() - r.P1.birthDate.getTime()
-        personPairs.push(r)
-      }
-    }
-
-    if (personPairs.length < 1) {
+  find(finderType: FinderCriteria): PersonPair {
+    if (this.allPossiblePairs.length < 1) {
       return new PersonPair()
     }
 
-    let answer = personPairs[0]
-
-    for (const result of personPairs) {
-      switch (finderType) {
-        case FinderCriteria.CLOSEST:
-          if (result.D < answer.D) {
-            answer = result
-          }
-          break
-
-        case FinderCriteria.FURTHEST:
-          if (result.D > answer.D) {
-            answer = result
-          }
-          break
-      }
+    switch (finderType) {
+      case FinderCriteria.CLOSEST:
+        return this.sortedPairs[0]
+      case FinderCriteria.FURTHEST:
+        return this.sortedPairs[this.sortedPairs.length - 1]
     }
 
-    return answer
+    return new PersonPair()
+  }
+
+  private sortPairs(personPairs: PersonPair[]) {
+    return [...personPairs].sort(
+      (a, b) => a.birthDateDistanceInMs - b.birthDateDistanceInMs,
+    )
+  }
+
+  private computeAllPossiblePairs(people: Person[]) {
+    let personPairs: PersonPair[] = []
+
+    for (let i = 0; i < people.length - 1; i++) {
+      for (let j = i + 1; j < people.length; j++) {
+        let r = new PersonPair()
+        if (people[i].birthDate.getTime() < people[j].birthDate.getTime()) {
+          r.firstPerson = people[i]
+          r.secondPerson = people[j]
+        } else {
+          r.firstPerson = people[j]
+          r.secondPerson = people[i]
+        }
+        r.birthDateDistanceInMs =
+          r.secondPerson.birthDate.getTime() - r.firstPerson.birthDate.getTime()
+        personPairs.push(r)
+      }
+    }
+    return personPairs
   }
 }
