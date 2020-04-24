@@ -1,4 +1,4 @@
-export class Thing {
+export class Person {
   public name!: string
   public birthDate!: Date
 

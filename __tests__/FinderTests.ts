@@ -1,19 +1,19 @@
-import { Thing } from "../src/Thing";
+import { Person } from "../src/Person";
 import { Finder } from "../src/Finder";
-import { FT } from "../src/FT";
-import { F } from "../src/F";
+import { FinderCriteria } from "../src/FinderCriteria";
+import { PersonPair } from "../src/PersonPair";
 
 describe("FinderTests", () => {
-  let sue: Thing
-	let greg: Thing
-	let sarah: Thing
-  let mike: Thing
+  let sue: Person
+	let greg: Person
+	let sarah: Person
+  let mike: Person
 
   beforeEach(() => {
-    sue = new Thing();
-    greg = new Thing();
-    sarah = new Thing();
-    mike = new Thing();
+    sue = new Person();
+    greg = new Person();
+    sarah = new Person();
+    mike = new Person();
 
     sue.name = "Sue";
 		sue.birthDate = new Date(1950, 0, 1);
@@ -26,68 +26,68 @@ describe("FinderTests", () => {
   })
 
   it("returns empty results when given empty list", () => {
-		const list: Thing[] = [];
+		const list: Person[] = [];
 		const finder = new Finder(list);
 
-    const result: F = finder.Find(FT.One);
+    const result: PersonPair = finder.Find(FinderCriteria.CLOSEST);
     
     expect(result.P1).toBeUndefined()
     expect(result.P2).toBeUndefined()
   })
 
   it("returns empty results when given one person", () => {
-		const list: Thing[] = [];
+		const list: Person[] = [];
 		list.push(sue);
 
 		const finder = new Finder(list);
 
-		const result = finder.Find(FT.One);
+		const result = finder.Find(FinderCriteria.CLOSEST);
 
 		expect(result.P1).toBeUndefined()
     expect(result.P2).toBeUndefined()
   })
 
   it("returns closest two for two people", () => {
-		const list: Thing[]  = [];
+		const list: Person[]  = [];
 		list.push(sue);
 		list.push(greg);
 		const finder = new Finder(list);
 
-		const result = finder.Find(FT.One);
+		const result = finder.Find(FinderCriteria.CLOSEST);
 
     expect(result.P1).toEqual(sue)
     expect(result.P2).toEqual(greg)
   })
   
   it("returns furthest two for two people", () => {
-		const list: Thing[] = [];
+		const list: Person[] = [];
 		list.push(mike);
 		list.push(greg);
 
 		const finder = new Finder(list);
 
-		const result = finder.Find(FT.Two);
+		const result = finder.Find(FinderCriteria.FURTHEST);
 
     expect(result.P1).toEqual(greg)
     expect(result.P2).toEqual(mike)
   })
 
   it("returns furthest two for four people", () => {
-		const list: Thing[] = []
+		const list: Person[] = []
 		list.push(sue);
 		list.push(sarah);
 		list.push(mike);
 		list.push(greg);
 		const finder = new Finder(list);
 
-		const result = finder.Find(FT.Two);
+		const result = finder.Find(FinderCriteria.FURTHEST);
 
     expect(result.P1).toEqual(sue)
     expect(result.P2).toEqual(sarah)
   })
   
   it("returns closest two for four people", () => {
-		const list: Thing[] = []
+		const list: Person[] = []
 		list.push(sue);
 		list.push(sarah);
 		list.push(mike);
@@ -95,7 +95,7 @@ describe("FinderTests", () => {
 
 		const finder = new Finder(list);
 
-		const result = finder.Find(FT.One);
+		const result = finder.Find(FinderCriteria.CLOSEST);
 
     expect(result.P1).toEqual(sue)
     expect(result.P2).toEqual(greg)

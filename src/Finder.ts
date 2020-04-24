@@ -1,47 +1,47 @@
-import { Thing } from "./Thing"
-import { FT } from "./FT"
-import { F } from "./F"
+import { Person } from "./Person"
+import { FinderCriteria } from "./FinderCriteria"
+import { PersonPair } from "./PersonPair"
 
 export class Finder {
-  private _p: Thing[]
+  private people: Person[]
 
-  constructor(p: Thing[]) {
-    this._p = p
+  constructor(people: Person[]) {
+    this.people = people
   }
 
-  Find(ft: FT): F {
-    let tr: F[] = []
+  Find(finderType: FinderCriteria): PersonPair {
+    let personPairs: PersonPair[] = []
 
-    for (let i = 0; i < this._p.length - 1; i++) {
-      for (let j = i + 1; j < this._p.length; j++) {
-        let r = new F()
-        if (this._p[i].birthDate.getTime() < this._p[j].birthDate.getTime()) {
-          r.P1 = this._p[i]
-          r.P2 = this._p[j]
+    for (let i = 0; i < this.people.length - 1; i++) {
+      for (let j = i + 1; j < this.people.length; j++) {
+        let r = new PersonPair()
+        if (this.people[i].birthDate.getTime() < this.people[j].birthDate.getTime()) {
+          r.P1 = this.people[i]
+          r.P2 = this.people[j]
         } else {
-          r.P1 = this._p[j]
-          r.P2 = this._p[i]
+          r.P1 = this.people[j]
+          r.P2 = this.people[i]
         }
         r.D = r.P2.birthDate.getTime() - r.P1.birthDate.getTime()
-        tr.push(r)
+        personPairs.push(r)
       }
     }
 
-    if (tr.length < 1) {
-      return new F()
+    if (personPairs.length < 1) {
+      return new PersonPair()
     }
 
-    let answer = tr[0]
+    let answer = personPairs[0]
 
-    for (const result of tr) {
-      switch (ft) {
-        case FT.One:
+    for (const result of personPairs) {
+      switch (finderType) {
+        case FinderCriteria.CLOSEST:
           if (result.D < answer.D) {
             answer = result
           }
           break
 
-        case FT.Two:
+        case FinderCriteria.FURTHEST:
           if (result.D > answer.D) {
             answer = result
           }
